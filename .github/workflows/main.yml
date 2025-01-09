@@ -1,17 +1,11 @@
 name: Create Repo
-on:
-  push:
-    branches: # Define example branch names here
-      - 'feature/*'
-      - 'hotfix/snow-123/*'
-  pull_request:
-
-permissions:
-  contents: write
-  repository-projects: write
-  pull-requests: write
-  issues: write
-  actions: write
+on: 
+  workflow_dispatch:
+    inputs:
+      repo-name: 
+        description: 'Name of the repository to be created'
+        required: true
+        default: ''
 
 jobs:
   create-repository:
