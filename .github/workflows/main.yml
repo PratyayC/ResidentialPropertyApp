@@ -1,36 +1,24 @@
-name: 'Create an Organization Repository'
-on:
-  push:
-    branches: # Define example branch names here
-      - 'feature/*'
-      - 'hotfix/snow-123/*'
-  pull_request:
+name: Create Repo
+on: 
+  workflow_dispatch:
+    inputs:
+      repo-name: 
+        description: 'Name of the repository to be created'
+        required: true
+        default: ''
 
-permissions:
-  contents: write
-  repository-projects: write
-  pull-requests: write
-  issues: write
-  actions: write
-
-
-description: 'Creates an Organization Repository and adds the Actor as an admin'
-branding:
-  icon: 'folder-plus'
-  color: 'blue'
-
-inputs:
-  repo-name: 'Test Repo'
-    description: 'What is the name of the repository?'
-    required: true
-    default: ''
-  org-admin-token:
-    description: 'Organization admin token with admin:org scope'
-    required: true
-    default: ''
-outputs:
-  repo-url: # change this as needed
-    description: 'URL of the created repository'
-runs:
-  using: 'node12'
-  main: 'dist/index.js'
+jobs:
+  create-repository:
+    runs-on: ubuntu-latest
+    name: Creating Organization Repository
+    steps:
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+      - name: Creating GitHub Organization Repository
+        uses: repo-ctrl/create-repo-action@main 
+        id: create-repo
+        with:
+          repo-name: '${{ github.event.inputs.repo-name }}'
+          org-admin-token: '${{ secrets.ORG_ADMIN_TOKEN }}'
+      - name: Log URL to the repo
+        run: echo "The new repo is ${{ steps.create-repo.outputs.repo-url }}"
